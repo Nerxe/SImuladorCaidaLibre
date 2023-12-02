@@ -17,7 +17,7 @@ dibujar = function (datos) {
   google.charts.setOnLoadCallback(drawCharts);
 
   function drawCharts() {
-    // Crear datos para el gráfico de velocidad (v)
+    // gráfico de velocidad (v)
     var arrayV = [['t', 'v']];
     var fracciones = _self.datos.t / 5;
     for (var i = 0; i <= 5; i++) {
@@ -32,7 +32,7 @@ dibujar = function (datos) {
     var chartV = new google.visualization.AreaChart(document.getElementById('chart_div_v'));
     chartV.draw(dataV, optionsV);
 
-    // Crear datos para el gráfico de distancia (y)
+    // gráfico de distancia 
     var arrayY = [['t', 'y']];
     for (var i = 0; i <= 5; i++) {
       arrayY.push([fracciones * i, caida({ t: fracciones * i }).d()]);
@@ -46,11 +46,9 @@ dibujar = function (datos) {
     var chartY = new google.visualization.AreaChart(document.getElementById('chart_div_y'));
     chartY.draw(dataY, optionsY);
 
-    // Redondear la velocidad final y el tiempo a 2 decimales
     var vfRounded = parseFloat(_self.datos.vf.toFixed(2));
     var tiempoRounded = parseFloat(_self.datos.t.toFixed(2));
 
-    // Mostrar la velocidad final y el tiempo redondeados en el HTML
     $("#vf").html(vfRounded);
     $("#tiempo").val(tiempoRounded);
   }
@@ -73,9 +71,14 @@ animar = function (datos) {
 caida = function (datos) {
   var _self = this;
   _self.datos = datos;
+
   function init() {
-    _self.datos.a = 9.81;
-    _self.datos.vo = 0;
+    _self.datos.resistenciaAire = parseFloat($("#resistenciaAire").val()) || 0;
+    _self.datos.masaObjeto = parseFloat($("#masaObjeto").val()) || 1;
+
+    // Calcular aceleración considerando resistencia del aire y masa
+    _self.datos.a = (9.81 - _self.datos.resistenciaAire) / _self.datos.masaObjeto;
+
     if (!_self.datos.d) {
       _self.datos.d = _self.d();
     }
@@ -87,15 +90,19 @@ caida = function (datos) {
     }
     animar(_self.datos);
   }
+
   _self.vf = function () {
-    return (9.81 * (_self.datos.t));
+    return (_self.datos.a * _self.datos.t);
   }
+
   _self.d = function () {
-    return ((0.5 * (9.81) * (_self.datos.t * _self.datos.t)));
+    return (0.5 * _self.datos.a * (_self.datos.t * _self.datos.t));
   }
+
   _self.t = function () {
-    return (Math.sqrt((2 * _self.datos.d) / 9.81));
+    return (Math.sqrt((2 * _self.datos.d) / _self.datos.a));
   }
+
   init();
   return _self;
 }
@@ -111,6 +118,7 @@ $("#iniciar").click(function () {
     alert("Ingrese solo uno de los valores");
     return 0;
   }
+
   if ($("#distancia").val()) {
     var datos = caida({ d: $("#distancia").val() });
     $("#tiempo").val(parseFloat(datos.datos.t.toFixed(2)));
@@ -119,6 +127,7 @@ $("#iniciar").click(function () {
     }, (datos.datos.t * 1000));
     return;
   }
+
   if ($("#tiempo").val()) {
     var datos = caida({ t: $("#tiempo").val() });
     $("#distancia").val(parseFloat(datos.datos.d.toFixed(2)));
@@ -170,5 +179,6 @@ $(document).ready(function () {
     }
   };
 });
+
 window.onresize = resize;
 resize();
