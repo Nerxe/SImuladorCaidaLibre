@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <link rel="stylesheet" href="caida.css">
+  <meta charset="utf-8">
+  <title>PROYECTO FINAL: SIMULADOR DE CAIDA LIBRE</title>
+</head>
+
+<body>
+  <div class="content">
+    <div id="chart_div_y"></div>
+    <div id="chart_div_v"></div>
+    <svg id="content" viewBox="-370 -0 680 10">
+      <rect id="suelo" x="-10000" y="0" width="20000" height="20000" />
+      <circle id="cuerpo" cx="2.5" cy="-300" r="10" style="fill:red" />
+    </svg>
+    <div class="datos">
+      <div class="datos-output">
+        <div class="section">
+          <span>Velocidad Final: <span class="span-datos" id="vf"></span>m/s </span>
+        </div>
+        <div class="section">
+          <span>Aceleración: <span class="span-datos" id="a">9.81</span>m/s² </span>
+        </div>
+        <div class="section">
+          <span>Velocidad Inicial (m/s): <span class="span-datos" id="vo">0</span>m/s </span>
+        </div>
+      </div>
+      <div class="datos-input">
+        <div class="section">
+          <label>Altura (m):</label>
+          <input id="altura" type="range" min=".1" max="100" step=".1">
+        </div>
+        <div class="section">
+          <label>Resistencia(Kg/m³):</label>
+          <input type="number" id="resistenciaAire" value="" placeholder="Introduzca la resistencia del aire">
+        </div>
+        <div class="section">
+          <label>Masa del Objeto (N):</label>
+          <input type="number" id="masaObjeto" value="" placeholder="Introduzca la masa del objeto">
+        </div>
+        <div class="cont-datos">
+          <div class="section">
+            <label>Altura personalizada (m):</label>
+            <input type="number" id="distancia" value="" placeholder="Introduza la distancia en metros">
+          </div>
+          <div class="section">
+            <label>Tiempo (s):</label>
+            <input type="number" id="tiempo" value="" placeholder="Introduzca el tiempo en segundos">
+          </div>
+          <div class="section">
+            <button id="iniciar">Iniciar</button>
+            <button id="reiniciar">Reiniciar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.2.3/velocity.min.js"></script>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script src="caida.js"></script>
+
+  <div id="myModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <p>Proyecto Final CAF1 <br> SIMULADOR DE CAIDA LIBRE</p>
+    </div>
+  </div>
+</body>
+
+</html>
+
