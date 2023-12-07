@@ -10,7 +10,7 @@ function resize() {
   document.querySelector("#suelo").y.baseVal.value = ((window.innerHeight / 2) - window.innerHeight * 0.05);
 }
 
-dibujar = function (datos) {
+var dibujar = function (datos) {
   var _self = this;
   _self.datos = datos;
   google.charts.load('current', { 'packages': ['corechart'] });
@@ -54,30 +54,40 @@ dibujar = function (datos) {
   }
 };
 
-animar = function (datos) {
+var animar = function (datos) {
   var _self = this;
   _self.datos = datos;
   _self.datos.t_actual = 0;
 
   function init() {
     $("#vf").html(_self.datos.vf);
-    $("#cuerpo").velocity({ cy: ($("#suelo").attr("y") - $("#cuerpo").attr("r")), cx: $("#cuerpo").attr("cx") }, (_self.datos.t * 1000));
+    // Convertir el valor del radio a un número y calcular la nueva posición 'cy'
+    var radio = parseFloat($("#cuerpo").attr("r"));
+    var nuevaCy = parseFloat($("#suelo").attr("y")) - radio;
+    $("#cuerpo").velocity({ cy: nuevaCy, cx: $("#cuerpo").attr("cx") }, (_self.datos.t * 1000));
   }
 
   init();
   return _self;
 }
 
-caida = function (datos) {
+var caida = function (datos) {
   var _self = this;
   _self.datos = datos;
 
   function init() {
-    _self.datos.resistenciaAire = parseFloat($("#resistenciaAire").val()) || 0;
-    _self.datos.masaObjeto = parseFloat($("#masaObjeto").val()) || 1;
+    _self.datos.v = parseFloat($("#vo").text()) || 0;
+    _self.datos.masa = parseFloat($("#masaObjeto").val()) || masaObjeto;
+    // Nuevos parámetros para resistencia del aire
+    _self.datos.densidadAire = parseFloat($("#densidadAire").val()) || 1.2;
+    _self.datos.areaSuperficial = parseFloat($("#areaSuperficial").val()) || 1;
+    _self.datos.coefArrastre = parseFloat($("#coefArrastre").val()) || 0.47;
 
-    // Calcular aceleración considerando resistencia del aire y masa
-    _self.datos.a = (9.81 - _self.datos.resistenciaAire) / _self.datos.masaObjeto;
+    // Calcular la resistencia del aire
+    _self.datos.fuerzaArrastre = 0.5 * _self.datos.densidadAire * Math.pow(_self.datos.v, 2) * _self.datos.coefArrastre * _self.datos.areaSuperficial;
+
+    // Calcular aceleración neta considerando resistencia del aire y masa
+    _self.datos.a = (9.81 * _self.datos.masa - _self.datos.fuerzaArrastre) / _self.datos.masa;
 
     if (!_self.datos.d) {
       _self.datos.d = _self.d();
@@ -92,25 +102,45 @@ caida = function (datos) {
   }
 
   _self.vf = function () {
-    return (_self.datos.a * _self.datos.t);
+    return (_self.datos.v + _self.datos.a * _self.datos.t);
   }
 
   _self.d = function () {
-    return (0.5 * _self.datos.a * (_self.datos.t * _self.datos.t));
+    return (_self.datos.v * _self.datos.t + 0.5 * _self.datos.a * Math.pow(_self.datos.t, 2));
   }
 
   _self.t = function () {
-    return (Math.sqrt((2 * _self.datos.d) / _self.datos.a));
-  }
+    // Valores iniciales
+    var v = _self.datos.v; // Velocidad inicial
+    var t = 0; // Tiempo inicial
+    var dt = 0.01; // Incremento de tiempo para la simulación
+    var g = 9.81; // Aceleración de la gravedad
+    var y = _self.datos.d; // Altura inicial
+  
+    // Bucle para simular la caída
+    while (y >= 0) {
+      // Calcular la fuerza de arrastre en el instante actual
+      var fuerzaArrastre = 0.5 * _self.datos.densidadAire * v * v * _self.datos.coefArrastre * _self.datos.areaSuperficial;
+      // Calcular la aceleración neta
+      var a = g - (fuerzaArrastre / _self.datos.masa);
+      // Actualizar la velocidad y la posición
+      v += a * dt;
+      y -= v * dt;
+      // Incrementar el tiempo
+      t += dt;
+    }
+  
+    return t; // Retorna el tiempo total de caída
+  }  
 
   init();
   return _self;
 }
 
 $("#iniciar").click(function () {
-  // Verificar si se han proporcionado resistencia del aire, masa y altura
-  if ($("#resistenciaAire").val() === "" || $("#masaObjeto").val() === "" || $("#altura").val() === "") {
-    alert("Por favor, introduzca los valores de resistencia del aire, masa y altura.");
+  // Verificar si se han proporcionado masa y altura
+  if ( $("#distancia").val() === "") {
+    alert("Por favor, introduzca la altura o el tiempo");
     return;
   }
 
@@ -122,7 +152,7 @@ $("#iniciar").click(function () {
   if ($("#distancia").val()) {
     var datos = caida({ d: $("#distancia").val() });
     $("#tiempo").val(parseFloat(datos.datos.t.toFixed(2)));
-    setTimeout(function () {
+    setTimeout(function () { 
       dibujar(datos.datos);
     }, (datos.datos.t * 1000));
     return;
