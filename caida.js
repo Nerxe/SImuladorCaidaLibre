@@ -138,11 +138,11 @@ var caida = function (datos) {
 }
 
 $("#iniciar").click(function () {
-  // Verificar si se ha proporcionado masa y altura
-  if ($("#distancia").val() === "" && $("#tiempo").val() === "") {
-    alert("Por favor, introduzca la altura o el tiempo");
-    return;
-  }
+  /// Verificar si se ha proporcionado masa y altura
+  //if ($("#distancia").val() === "" && $("#tiempo").val() === "") {
+    //alert("Por favor, introduzca la altura o el tiempo");
+    //return;
+  //} 
 
   if ($("#tiempo").val() && $("#distancia").val()) {
     alert("Ingrese solo uno de los valores");
