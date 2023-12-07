@@ -13,7 +13,7 @@
     <div id="chart_div_v"></div>
     <svg id="content" viewBox="-370 -0 680 10">
       <rect id="suelo" x="-10000" y="0" width="20000" height="20000" />
-      <circle id="cuerpo" cx="2.5" cy="-300" r="10" style="fill:red" />
+      <circle id="cuerpo" cx="2.5" cy="-300" r="10" style="fill:red"></circle>
     </svg>
     <div class="datos">
       <div class="datos-output">
@@ -30,15 +30,28 @@
       <div class="datos-input">
         <div class="section">
           <label>Altura (m):</label>
-          <input id="altura" type="range" min=".1" max="100" step=".1">
+          <input id="altura" type="range" min=".1" max="400" step=".1">
         </div>
-        <div class="section">
+        <!--<div class="section">
           <label>Resistencia del aire (desaceleración):</label>
-          <input type="number" id="resistenciaAire" value="" min="0" max="9" placeholder="Introduzca la resistencia del aire" step=".1"> 
+          <input type="number" id="resistenciaAire" value="" min="0" max="9" placeholder="Introduzca la resistencia del aire" step=".1">
+        </div>-->
+        <div class="section">
+          <label>Masa del Objeto (kg):</label>
+          <input type="number" id="masaObjeto" value="1" min="0.1" max="100" placeholder="Introduzca la masa del objeto" step="0.1">
+        </div>
+        <div class="section"> <!--Densidad del aire-->
+          <label>Densidad del aire (kg/m³):</label>
+          <input type="number" id="densidadAire" value="1.2" max="1.2" min="0.1" step="0.1">
+        </div>
+        <!--Area superficial  -->
+        <div class="section">
+          <label>Área Superficial (m²):</label>
+          <input type="number" id="areaSuperficial" value="0.01" max="5" min="0.01" step="0.1">
         </div>
         <div class="section">
-          <label>Masa del Objeto (N):</label>
-          <input type="number" id="masaObjeto" value="" min=".1" max="1000" placeholder="Introduzca la masa del objeto" step="1">
+          <label>Coeficiente de Arrastre:</label>
+          <input type="number" id="coefArrastre" value="0.47" min="0" max="1" step="0.01">
         </div>
         <div class="cont-datos">
           <div class="section">
@@ -61,6 +74,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.2.3/velocity.min.js"></script>
   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
   <script src="caida.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.2.3/velocity.min.js"></script>
 
   <div id="myModal" class="modal">
     <div class="modal-content">
@@ -71,4 +85,3 @@
 </body>
 
 </html>
-
