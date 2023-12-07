@@ -13,6 +13,7 @@
     <div id="chart_div_v"></div>
     <svg id="content" viewBox="-370 -0 680 10">
       <rect id="suelo" x="-10000" y="0" width="20000" height="20000" />
+      <image xlink:href="torre.png" x="-300" y="-300" width="700" height="590" />
       <circle id="cuerpo" cx="2.5" cy="-300" r="10" style="fill:red"></circle>
     </svg>
     <div class="datos">
@@ -28,6 +29,10 @@
         </div>
       </div>
       <div class="datos-input">
+        <div class="section">
+          <label>En vacío:</label>
+          <input type="checkbox" id="enVacio" />
+        </div>
         <div class="section">
           <label>Altura (m):</label>
           <input id="altura" type="range" min=".1" max="400" step=".1">

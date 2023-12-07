@@ -77,11 +77,11 @@ var caida = function (datos) {
 
   function init() {
     _self.datos.v = parseFloat($("#vo").text()) || 0;
-    _self.datos.masa = parseFloat($("#masaObjeto").val()) || masaObjeto;
+    _self.datos.masa = $("#enVacio").prop("checked") ? 1 : parseFloat($("#masaObjeto").val()) || masaObjeto;
     // Nuevos parámetros para resistencia del aire
-    _self.datos.densidadAire = parseFloat($("#densidadAire").val()) || 1.2;
-    _self.datos.areaSuperficial = parseFloat($("#areaSuperficial").val()) || 1;
-    _self.datos.coefArrastre = parseFloat($("#coefArrastre").val()) || 0.47;
+    _self.datos.densidadAire = $("#enVacio").prop("checked") ? 0.1 : parseFloat($("#densidadAire").val()) || 1.2;
+    _self.datos.areaSuperficial = $("#enVacio").prop("checked") ? 0.01 : parseFloat($("#areaSuperficial").val()) || 1;
+    _self.datos.coefArrastre = $("#enVacio").prop("checked") ? 0 : parseFloat($("#coefArrastre").val()) || 0.47;
 
     // Calcular la resistencia del aire
     _self.datos.fuerzaArrastre = 0.5 * _self.datos.densidadAire * Math.pow(_self.datos.v, 2) * _self.datos.coefArrastre * _self.datos.areaSuperficial;
@@ -138,8 +138,8 @@ var caida = function (datos) {
 }
 
 $("#iniciar").click(function () {
-  // Verificar si se han proporcionado masa y altura
-  if ( $("#distancia").val() === "") {
+  // Verificar si se ha proporcionado masa y altura
+  if ($("#distancia").val() === "" && $("#tiempo").val() === "") {
     alert("Por favor, introduzca la altura o el tiempo");
     return;
   }
@@ -152,7 +152,7 @@ $("#iniciar").click(function () {
   if ($("#distancia").val()) {
     var datos = caida({ d: $("#distancia").val() });
     $("#tiempo").val(parseFloat(datos.datos.t.toFixed(2)));
-    setTimeout(function () { 
+    setTimeout(function () {
       dibujar(datos.datos);
     }, (datos.datos.t * 1000));
     return;
@@ -165,6 +165,30 @@ $("#iniciar").click(function () {
       dibujar(datos.datos);
     }, (datos.datos.t * 1000));
     dibujar(datos.datos);
+  }
+  
+  // Verificar si el checkbox "en vacío" está marcado y deshabilitar la entrada de masa, densidadAire, areaSuperficial y coefArrastre
+  if ($("#enVacio").prop("checked")) {
+    $("#masaObjeto, #densidadAire, #areaSuperficial, #coefArrastre").prop("disabled", true);
+    $("#masaObjeto").val(1);  // Establecer masa en 1 cuando está en vacío
+    $("#densidadAire").val(0.1);  // Establecer densidad del aire en 0.1 cuando está en vacío
+    $("#areaSuperficial").val(0.01);  // Establecer área superficial en 0.01 cuando está en vacío
+    $("#coefArrastre").val(0);  // Establecer coeficiente de arrastre en 0 cuando está en vacío
+  } else {
+    $("#masaObjeto, #densidadAire, #areaSuperficial, #coefArrastre").prop("disabled", false);
+  }
+});
+
+// Agrega un evento para cambiar la entrada de masa, densidadAire, areaSuperficial y coefArrastre cuando se marque/desmarque el checkbox
+$("#enVacio").change(function () {
+  if ($(this).prop("checked")) {
+    $("#masaObjeto, #densidadAire, #areaSuperficial, #coefArrastre").prop("disabled", true);
+    $("#masaObjeto").val(1);  // Establecer masa en 1 cuando está en vacío
+    $("#densidadAire").val(0.1);  // Establecer densidad del aire en 0.1 cuando está en vacío
+    $("#areaSuperficial").val(0.01);  // Establecer área superficial en 0.01 cuando está en vacío
+    $("#coefArrastre").val(0);  // Establecer coeficiente de arrastre en 0 cuando está en vacío
+  } else {
+    $("#masaObjeto, #densidadAire, #areaSuperficial, #coefArrastre").prop("disabled", false);
   }
 });
 
